@@ -1,0 +1,116 @@
+syntax = "proto3";
+package search;
+
+//service
+service SearchService {
+    // // 获取每个应用所有评论
+    // rpc ListRepliesByApp(ListByAppReq) returns (ListByAppRes);
+    // // 获取某个目标所有评论,比如文章
+    // rpc ListRepliesByTarget(ListByTargetReq) returns (ListByTargetRes);
+    // // 获取单个评论
+    // rpc GetReplyById(GetByIdReq) returns (GetByIdRes);
+    // // 获取某个评论回复
+    // rpc ListRepliesByReply(ListByReplyReq) returns (ListByReplyRes);
+    // // 获取某个用户所有评论
+    // rpc ListRepliesByCreator(ListByUserReq) returns (ListByUserRes);
+    // // 获取某段时间的评论
+
+    rpc ListSearchs(ListSearchsRequest) returns (ListSearchsResponse);
+    rpc GetSearchById(GetSearchByIdRequest) returns (GetSearchByIdResponse);
+    rpc CreateSearch(CreateSearchRequest) returns (CreateSearchResponse);
+    rpc DeleteSearch(DeleteSearchRequest) returns (DeleteSearchResponse);
+    rpc Like(LikeRequest) returns (LikeResponse);
+    rpc Hate(HateRequest) returns (HateResponse);
+}
+
+// request
+
+message ListSearchsRequest {
+    string app_id = 1;
+    int64 target_id = 2; // 目标对象id
+
+    int32 page = 3;
+    int32 page_size = 4;
+    int64 creator_id = 5; // 创建者id
+    int64 parent_id = 6; // 父级id
+    int32 state = 7;
+    uint32 start_time = 8;
+    uint32 end_time = 9; 
+    int64 re_search_id = 10;
+}
+message ListSearchsResponse {
+    string app_id = 1;
+    repeated Search searchs = 2;
+    int64 total = 3;
+    int32 page = 4;
+    int32 page_size = 5; 
+}
+
+message GetSearchByIdRequest {
+    int64 search_id = 1;
+}
+
+message GetSearchByIdResponse {
+    Search search = 1;
+}
+
+message CreateSearchRequest {
+    message SearchCreateParams {
+        int64 target_id = 1; // 目标对象id
+        int64 creator_id = 2; // 创建者id
+        int64 parent_id = 3; // 父级id
+        int64 re_search_id = 4; // 回复评论的id A发表某个评论的回复， B发表对这个回复的回复
+        string content = 5;
+        string extra = 6;
+    }
+    string app_id = 1;
+    SearchCreateParams search = 2;
+}
+message CreateSearchResponse {
+    string app_id = 1;
+    Search search = 2;
+}
+
+message DeleteSearchRequest {
+    string app_id = 1;
+    int64 search_id = 2;
+}
+message DeleteSearchResponse {
+    string app_id = 1;
+    int64 search_id = 2;
+}
+
+message LikeRequest {
+    int64 search_id = 1;
+}
+message LikeResponse {
+    int64 search_id = 1;
+}
+
+message HateRequest {
+    int64 search_id = 1;
+}
+message HateResponse {
+    int64 search_id = 1;
+}
+
+message Search {
+    int64 search_id = 1;
+    int64 target_id = 2;
+    int64 creator_id = 3; 
+    int64 parent_id = 4; 
+    int64 re_search_id = 5; 
+    string content = 6;
+    string extra = 7;
+    int32 like = 8;
+    int32 hate = 9;
+    enum ESearchState {
+        UNKNOWN = 0;
+        SHOW = 1;      // 正常展示
+        WITHDRAW = 2;  // 撤回
+    }
+    ESearchState state = 10;
+    uint32 created_at = 11;
+    uint32 modified_at = 12;
+    uint32 floor = 13;
+}

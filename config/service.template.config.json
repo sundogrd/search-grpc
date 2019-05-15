@@ -1,0 +1,25 @@
+{
+  "name": "App",
+  "port": 9999,
+  "home_page": "Your Home Page",
+  "db": {
+    "type": "mysql",
+    "options": {
+      "user": "Your User Name",
+      "password": "Your Password",
+      "host": "Your Host",
+      "port": 3306,
+      "dbname": "Your DB Name",
+      "connectTimeout": "10s"
+    }
+  },
+  "redis": {
+    "host": "Your Host",
+    "port": 6379,
+    "password": ""
+  },
+  "grpcService": {
+    "host": "localhost",
+    "port": "24952"
+  }
+}
