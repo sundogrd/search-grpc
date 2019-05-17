@@ -5,15 +5,16 @@ import (
 	"net"
 	"time"
 
+	configUtils "github.com/sundogrd/gopkg/config"
+	"github.com/sundogrd/gopkg/db"
+	grpcUtils "github.com/sundogrd/gopkg/grpc"
 	searchGen "github.com/sundogrd/search-grpc/grpc_gen/search"
 	searchRepo "github.com/sundogrd/search-grpc/providers/repos/search/repo"
 	"github.com/sundogrd/search-grpc/servers/search"
 	searchService "github.com/sundogrd/search-grpc/services/search/service"
-	configUtils "github.com/sundogrd/gopkg/config"
-	"github.com/sundogrd/gopkg/db"
-	grpcUtils "github.com/sundogrd/gopkg/grpc"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
+	"github.com/elastic/go-elasticsearch/v7"
 )
 
 func main() {
@@ -73,10 +74,17 @@ func main() {
 	}
 	logrus.Printf("[search-grpc] ResgiterServer finished, service: %s, %s", "sundog.search", instanceAddr)
 
+	es, err := elasticsearch.NewDefaultClient()
+	if err != nil {
+		logrus.Errorf("[search-grpc] Error creating the client: %s", err)
+		panic(err)
+	}
+
 	searchGen.RegisterSearchServiceServer(grpcServer, &search.SearchServiceServer{
-		GormDB:         gormDB,
-		SearchRepo:    cr,
-		SearchService: cs,
+		GormDB:              gormDB,
+		SearchRepo:          cr,
+		SearchService:       cs,
+		ElasticsearchClient: es,
 	})
 	reflection.Register(grpcServer)
 	grpcServer.Serve(listen)

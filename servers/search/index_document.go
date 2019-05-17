@@ -7,7 +7,7 @@ import (
 	"github.com/sundogrd/search-grpc/grpc_gen/search"
 )
 
-func (server SearchServiceServer) Like(ctx context.Context, req *search.LikeRequest) (*search.LikeResponse, error) {
+func (server SearchServiceServer) IndexDocument(ctx context.Context, req *search.IndexDocumentRequest) (*search.IndexDocumentResponse, error) {
 
 	return nil, errors.New("not implemented")
 }
