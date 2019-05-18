@@ -9,9 +9,7 @@ import (
 	"github.com/sundogrd/gopkg/db"
 	grpcUtils "github.com/sundogrd/gopkg/grpc"
 	searchGen "github.com/sundogrd/search-grpc/grpc_gen/search"
-	searchRepo "github.com/sundogrd/search-grpc/providers/repos/search/repo"
 	"github.com/sundogrd/search-grpc/servers/search"
-	searchService "github.com/sundogrd/search-grpc/services/search/service"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 	"github.com/elastic/go-elasticsearch/v7"
@@ -45,20 +43,6 @@ func main() {
 	}
 	logrus.Printf("[search-grpc] db.Connect finished")
 
-	cr, err := searchRepo.NewSearchRepo(gormDB, 2*time.Second)
-	if err != nil {
-		logrus.Errorf("[search-grpc] NewSearchRepo err: %s", err.Error())
-		panic(err)
-	}
-	logrus.Printf("[search-grpc] NewSearchRepo finished")
-
-	cs, err := searchService.NewSearchService(&cr, 2*time.Second)
-	if err != nil {
-		logrus.Errorf("[search-grpc] NewSearchService err: %s", err.Error())
-		panic(err)
-	}
-	logrus.Printf("[search-grpc] NewSearchService finished")
-
 	grpcServer := grpc.NewServer()
 	resolver, err := grpcUtils.NewGrpcResolover()
 	if err != nil {
@@ -82,8 +66,6 @@ func main() {
 
 	searchGen.RegisterSearchServiceServer(grpcServer, &search.SearchServiceServer{
 		GormDB:              gormDB,
-		SearchRepo:          cr,
-		SearchService:       cs,
 		ElasticsearchClient: es,
 	})
 	reflection.Register(grpcServer)

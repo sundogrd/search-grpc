@@ -15,6 +15,7 @@ func (server SearchServiceServer) DeleteIndex(ctx context.Context, req *search.D
 		logrus.Errorf("[search-grpc/servers/search] DeleteIndex err: %s", err.Error())
 		return nil, err
 	}
+	defer indicesDeleteRes.Body.Close()
 	if indicesDeleteRes.StatusCode != 200 && indicesDeleteRes.StatusCode != 204 {
 		return nil, errors.New(fmt.Sprintf("[search-grpc/servers/search] DeleteIndex elastic response error: %s", indicesDeleteRes.String()))
 	}

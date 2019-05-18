@@ -3,23 +3,9 @@ package search_test
 import (
 	"context"
 	"fmt"
-	"github.com/elastic/go-elasticsearch/v7"
 	searchGen "github.com/sundogrd/search-grpc/grpc_gen/search"
-	"github.com/sundogrd/search-grpc/servers/search"
 	"testing"
 )
-
-func newTestSearchServer() (*search.SearchServiceServer, error) {
-	client, err := elasticsearch.NewDefaultClient()
-	if err != nil {
-		return nil, err
-	}
-	return &search.SearchServiceServer{
-		ElasticsearchClient: client,
-	}, nil
-}
-
-
 
 func TestSearchServer_AddIndex(t *testing.T) {
 	server, err := newTestSearchServer()
@@ -28,7 +14,7 @@ func TestSearchServer_AddIndex(t *testing.T) {
 	}
 	fmt.Println("测试开始运行.....")
 	res, err := server.AddIndex(context.Background(), &searchGen.AddIndexRequest{
-		AppId: "lwio",
+		AppId:     "lwio",
 		IndexName: "test",
 		IndexJson: "{}",
 	})

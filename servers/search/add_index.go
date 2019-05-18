@@ -15,6 +15,7 @@ func (server SearchServiceServer) AddIndex(ctx context.Context, req *search.AddI
 		logrus.Errorf("[search-grpc/servers/search] AddIndex err: %s", err.Error())
 		return nil, err
 	}
+	defer indicesCreateRes.Body.Close()
 	if indicesCreateRes.StatusCode != 200 && indicesCreateRes.StatusCode != 204 {
 		return nil, errors.New(fmt.Sprintf("[search-grpc/servers/search] AddIndex elastic response error: %s", indicesCreateRes.String()))
 	}
