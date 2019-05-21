@@ -5,14 +5,13 @@ import (
 	"net"
 	"time"
 
+	"github.com/elastic/go-elasticsearch/v7"
 	configUtils "github.com/sundogrd/gopkg/config"
-	"github.com/sundogrd/gopkg/db"
 	grpcUtils "github.com/sundogrd/gopkg/grpc"
 	searchGen "github.com/sundogrd/search-grpc/grpc_gen/search"
 	"github.com/sundogrd/search-grpc/servers/search"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
-	"github.com/elastic/go-elasticsearch/v7"
 )
 
 func main() {
@@ -29,19 +28,19 @@ func main() {
 		panic(err)
 	}
 
-	gormDB, err := db.Connect(db.ConnectOptions{
-		User:           config.Get("db.options.user").(string),
-		Password:       config.Get("db.options.password").(string),
-		Host:           config.Get("db.options.host").(string),
-		Port:           config.Get("db.options.port").(string),
-		DBName:         config.Get("db.options.dbname").(string),
-		ConnectTimeout: config.Get("db.options.connectTimeout").(string),
-	})
-	if err != nil {
-		logrus.Errorf("[search-grpc] db.Connect err: %s", err.Error())
-		panic(err)
-	}
-	logrus.Printf("[search-grpc] db.Connect finished")
+	//gormDB, err := db.Connect(db.ConnectOptions{
+	//	User:           config.Get("db.options.user").(string),
+	//	Password:       config.Get("db.options.password").(string),
+	//	Host:           config.Get("db.options.host").(string),
+	//	Port:           config.Get("db.options.port").(string),
+	//	DBName:         config.Get("db.options.dbname").(string),
+	//	ConnectTimeout: config.Get("db.options.connectTimeout").(string),
+	//})
+	//if err != nil {
+	//	logrus.Errorf("[search-grpc] db.Connect err: %s", err.Error())
+	//	panic(err)
+	//}
+	//logrus.Printf("[search-grpc] db.Connect finished")
 
 	grpcServer := grpc.NewServer()
 	resolver, err := grpcUtils.NewGrpcResolover()
@@ -65,7 +64,7 @@ func main() {
 	}
 
 	searchGen.RegisterSearchServiceServer(grpcServer, &search.SearchServiceServer{
-		GormDB:              gormDB,
+		//GormDB:              gormDB,
 		ElasticsearchClient: es,
 	})
 	reflection.Register(grpcServer)
